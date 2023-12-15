@@ -435,7 +435,9 @@ void WorldSession::HandleForceSpeedChangeAckOpcodes(WorldPacket& recv_data)
         {
             BASIC_LOG("Player %s from account id %u kicked for incorrect speed (must be %f instead %f)",
                       _player->GetName(), _player->GetSession()->GetAccountId(), mover->GetSpeed(move_type), newspeed);
-            _player->GetSession()->KickPlayer();
+            mover->SetSpeedRate(move_type, _player->GetSpeedRate(move_type), true);
+            // FIXME: This kick fires too laxly
+            // _player->GetSession()->KickPlayer();
         }
     }
 }
