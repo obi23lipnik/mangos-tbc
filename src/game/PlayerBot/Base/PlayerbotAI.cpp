@@ -3082,27 +3082,34 @@ void PlayerbotAI::InterruptCurrentCastingSpell()
 // based on its class / level / etc
 void PlayerbotAI::Attack(Unit* forcedTarget)
 {
-    // set combat state, and clear looting, etc...
-    if (m_botState != BOTSTATE_COMBAT)
-    {
-        SetState(BOTSTATE_COMBAT);
-        // m_lootCurrent = ObjectGuid(); This was clearing loot target, causing bots to leave corpses unlooted if interupted by combat. Needs testing.
-        // using this caused bot to remove current loot target, and add this new threat to the loot list.  Now it remembers the loot target and adds a new one.
-        // Bot will still clear the target if the master gets too far away from it.
-        m_targetCombat = nullptr;
-        m_DelayAttackInit = CurrentTime(); // Combat started, new start time to check CombatDelay for.
+    try {
+        // set combat state, and clear looting, etc...
+        if (m_botState != BOTSTATE_COMBAT)
+        {
+            SetState(BOTSTATE_COMBAT);
+            // m_lootCurrent = ObjectGuid(); This was clearing loot target, causing bots to leave corpses unlooted if interupted by combat. Needs testing.
+            // using this caused bot to remove current loot target, and add this new threat to the loot list.  Now it remembers the loot target and adds a new one.
+            // Bot will still clear the target if the master gets too far away from it.
+            m_targetCombat = nullptr;
+            m_DelayAttackInit = CurrentTime(); // Combat started, new start time to check CombatDelay for.
+        }
+
+        GetCombatTarget(forcedTarget);
+
+        if (!m_targetCombat)
+            return;
+
+        m_bot->Attack(m_targetCombat, true);
+
+        // add thingToAttack to loot list to loot after combat
+        if (HasCollectFlag(COLLECT_FLAG_COMBAT))
+            m_lootTargets.push_back(m_targetCombat->GetObjectGuid());        
+    } catch(std::exception const & ex) {
+        sLog.outDebug("Error:%s", ex.what());
+    } catch (...) {
+        sLog.outDebug("Unknown error within playerbot attack");
     }
 
-    GetCombatTarget(forcedTarget);
-
-    if (!m_targetCombat)
-        return;
-
-    m_bot->Attack(m_targetCombat, true);
-
-    // add thingToAttack to loot list to loot after combat
-    if (HasCollectFlag(COLLECT_FLAG_COMBAT))
-        m_lootTargets.push_back(m_targetCombat->GetObjectGuid());
 }
 
 // intelligently sets a reasonable combat order for this bot
