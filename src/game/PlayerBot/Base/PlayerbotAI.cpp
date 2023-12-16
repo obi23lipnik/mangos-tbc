@@ -3105,7 +3105,7 @@ void PlayerbotAI::Attack(Unit* forcedTarget)
         if (HasCollectFlag(COLLECT_FLAG_COMBAT))
             m_lootTargets.push_back(m_targetCombat->GetObjectGuid());        
     } catch(std::exception const & ex) {
-        sLog.outDebug(ex.what());
+        sLog.outDebug("Error:%s", ex.what());
     } catch (...) {
         sLog.outDebug("Unknown error within playerbot attack");
     }
