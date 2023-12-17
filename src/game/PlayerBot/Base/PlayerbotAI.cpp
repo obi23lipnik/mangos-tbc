@@ -3245,8 +3245,13 @@ void PlayerbotAI::DoNextCombatManeuver()
     if (m_ScenarioType == SCENARIO_PVP_DUEL)
         GetDuelTarget(GetMaster()); // TODO: Woah... wait... what? So not right.
     else
-        Attack();
-
+    {
+        try {
+            Attack();
+        } catch (...) {
+            sLog.outError("surprise, surprise: playerbot caused exception. Bot master:%s", GetMaster()->GetName())
+        }
+    }
     // clear orders if current target for attacks doesn't make sense anymore
     if (!m_targetCombat || m_targetCombat->IsDead() || !m_targetCombat->IsInWorld() || !m_bot->CanAttack(m_targetCombat) || !m_bot->IsInMap(m_targetCombat))
     {
