@@ -3249,7 +3249,7 @@ void PlayerbotAI::DoNextCombatManeuver()
         try {
             Attack();
         } catch (...) {
-            sLog.outError("surprise, surprise: playerbot caused exception. Bot master:%s", GetMaster()->GetName())
+            sLog.outError("surprise, surprise: playerbot caused exception. Bot master:%s", GetMaster()->GetName());
         }
     }
     // clear orders if current target for attacks doesn't make sense anymore
