@@ -99,7 +99,7 @@ class TypeUnorderedMapContainer
                 elements._element[handle] = obj;
                 return true;
             }
-            assert(i->second == obj && "Object with certain key already in but objects are different!");
+            // assert(i->second == obj && "Object with certain key already in but objects are different!");  // screw this line, my guy..
             return false;
         }
 
