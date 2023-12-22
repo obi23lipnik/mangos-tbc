@@ -3148,7 +3148,7 @@ void PlayerbotAI::GetCombatTarget(Unit* forcedTarget)
     {
         // forced to change target to current target == null operation
         if (deep_forcedTarget_guid && deep_forcedTarget_guid == deep_m_targetCombat_guid)
-            deep_forcedTarget_guid.Clear()
+            deep_forcedTarget_guid.Clear();
             deep_m_targetCombat_guid.Clear();
             return;
 
