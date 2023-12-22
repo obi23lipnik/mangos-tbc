@@ -3151,6 +3151,14 @@ void PlayerbotAI::GetCombatTarget(Unit* forcedTarget)
         m_targetType = (m_combatOrder & (ORDERS_TANK | ORDERS_MAIN_TANK) ? TARGET_THREATEN : TARGET_NORMAL);
     }
 
+    if (!m_targetCombat ||
+        m_targetCombat->IsDead() ||
+        !m_targetCombat->IsInWorld() ||
+        !m_bot->CanAttack(m_targetCombat) ||
+        !m_bot->IsInMap(m_targetCombat))
+    {
+        m_targetCombat = nullptr;
+    }
     // we already have a target and we are not forced to change it
     if (m_targetCombat)
     {
@@ -3250,7 +3258,7 @@ void PlayerbotAI::DoNextCombatManeuver()
             Attack();
         } catch (...) {
             sLog.outError("surprise, surprise: playerbot caused exception. Bot master:%s", GetMaster()->GetName());
-        }
+        } final
     }
     // clear orders if current target for attacks doesn't make sense anymore
     if (!m_targetCombat || m_targetCombat->IsDead() || !m_targetCombat->IsInWorld() || !m_bot->CanAttack(m_targetCombat) || !m_bot->IsInMap(m_targetCombat))
