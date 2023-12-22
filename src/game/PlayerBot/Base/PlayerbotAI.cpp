@@ -3202,7 +3202,7 @@ void PlayerbotAI::GetCombatTarget(Unit* forcedTarget)
         {
             deep_m_targetCombat_guid = candidateTarget->GetObjectGuid();
             if (m_mgr.m_confDebugWhisper)
-                TellMaster("Attacking %s to assist %s", deep_m_targetCombat->GetName(), m_targetAssist->GetName());
+                TellMaster("Attacking %s to assist %s", m_bot->GetMap()->GetUnit(deep_m_targetCombat_guid)->GetName(), m_targetAssist->GetName());
             m_targetType = (m_combatOrder & (ORDERS_TANK | ORDERS_MAIN_TANK) ? TARGET_THREATEN : TARGET_NORMAL);
             m_targetChanged = true;
         }
