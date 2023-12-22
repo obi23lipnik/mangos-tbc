@@ -3258,7 +3258,7 @@ void PlayerbotAI::DoNextCombatManeuver()
             Attack();
         } catch (...) {
             sLog.outError("surprise, surprise: playerbot caused exception. Bot master:%s", GetMaster()->GetName());
-        } final
+        }
     }
     // clear orders if current target for attacks doesn't make sense anymore
     if (!m_targetCombat || m_targetCombat->IsDead() || !m_targetCombat->IsInWorld() || !m_bot->CanAttack(m_targetCombat) || !m_bot->IsInMap(m_targetCombat))
