@@ -3124,9 +3124,11 @@ void PlayerbotAI::GetCombatTarget(Unit* forcedTarget)
     Unit* candidateTarget;
     Unit* deep_forcedTarget;
     // Addng deep target because this some bull-
-    Unit* deep_m_targetCombat = new Unit(*m_targetCombat);
+    Unit* deep_m_targetCombat;
+    if(m_targetCombat)
+        deep_m_targetCombat = new Unit(*m_targetCombat);
     if(forcedTarget)
-        Unit* deep_forcedTarget = new Unit(*forcedTarget);
+        deep_forcedTarget = new Unit(*forcedTarget);
 
     // check for attackers on protected unit, and make it a forcedTarget if any
     if (!deep_forcedTarget && (m_combatOrder & ORDERS_PROTECT) && m_targetProtect)
