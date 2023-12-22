@@ -3126,15 +3126,15 @@ void PlayerbotAI::GetCombatTarget(Unit* forcedTarget)
     ObjectGuid deep_m_targetCombat_guid;
     ObjectGuid deep_forcedTarget_guid;
     if(m_targetCombat)
-        deep_m_targetCombat_guid = new ObjectGuid(m_targetCombat->GetObjectGuid());
+        deep_m_targetCombat_guid.Set(m_targetCombat->GetObjectGuid());
     if(forcedTarget)
-        deep_forcedTarget_guid = new ObjectGuid(forcedTarget->GetObjectGuid());
+        deep_forcedTarget_guid.Set(forcedTarget->GetObjectGuid());
 
     // check for attackers on protected unit, and make it a forcedTarget if any
     if (!deep_forcedTarget_guid && (m_combatOrder & ORDERS_PROTECT) && m_targetProtect)
     {
         candidateTarget = FindAttacker((ATTACKERINFOTYPE)(AIT_VICTIMNOTSELF | AIT_HIGHESTTHREAT), m_targetProtect);
-        if (candidateTarget && candidateTarget != deep_m_targetCombat && !IsNeutralized(candidateTarget))
+        if (candidateTarget && candidateTarget != m_bot->GetMap()->GetUnit(deep_m_targetCombat_guid) && !IsNeutralized(candidateTarget))
         {
             deep_forcedTarget_guid = candidateTarget->GetObjectGuid();
             m_targetType = TARGET_THREATEN;
