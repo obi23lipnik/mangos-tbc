@@ -3123,8 +3123,8 @@ void PlayerbotAI::GetCombatTarget(Unit* forcedTarget)
 
     Unit* candidateTarget;
     // Addng deep copies because this some bull-
-    ObjectGuid* deep_m_targetCombat_guid;
-    ObjectGuid* deep_forcedTarget_guid;
+    ObjectGuid deep_m_targetCombat_guid;
+    ObjectGuid deep_forcedTarget_guid;
     if(m_targetCombat)
         deep_m_targetCombat_guid = new ObjectGuid(m_targetCombat->getUnitGuid());
     if(forcedTarget)
