@@ -3126,9 +3126,9 @@ void PlayerbotAI::GetCombatTarget(Unit* forcedTarget)
     ObjectGuid deep_m_targetCombat_guid;
     ObjectGuid deep_forcedTarget_guid;
     if(m_targetCombat)
-        deep_m_targetCombat_guid = new ObjectGuid(m_targetCombat->getUnitGuid());
+        deep_m_targetCombat_guid = new ObjectGuid(m_targetCombat->GetObjectGuid());
     if(forcedTarget)
-        deep_forcedTarget_guid = new ObjectGuid(forcedTarget->getUnitGuid());
+        deep_forcedTarget_guid = new ObjectGuid(forcedTarget->GetObjectGuid());
 
     // check for attackers on protected unit, and make it a forcedTarget if any
     if (!deep_forcedTarget_guid && (m_combatOrder & ORDERS_PROTECT) && m_targetProtect)
@@ -3136,7 +3136,7 @@ void PlayerbotAI::GetCombatTarget(Unit* forcedTarget)
         candidateTarget = FindAttacker((ATTACKERINFOTYPE)(AIT_VICTIMNOTSELF | AIT_HIGHESTTHREAT), m_targetProtect);
         if (candidateTarget && candidateTarget != deep_m_targetCombat && !IsNeutralized(candidateTarget))
         {
-            deep_forcedTarget_guid = candidateTarget->getUnitGuid();
+            deep_forcedTarget_guid = candidateTarget->GetObjectGuid();
             m_targetType = TARGET_THREATEN;
             if (m_mgr.m_confDebugWhisper)
                 TellMaster("Changing target to %s to protect %s", m_bot->GetMap()->GetUnit(deep_forcedTarget_guid)->GetName(), m_targetProtect->GetName());
@@ -3148,8 +3148,8 @@ void PlayerbotAI::GetCombatTarget(Unit* forcedTarget)
     {
         // forced to change target to current target == null operation
         if (deep_forcedTarget_guid && deep_forcedTarget_guid == deep_m_targetCombat_guid)
-            deep_forcedTarget_guid = std::nullptr_t;
-            deep_m_targetCombat_guid = std::nullptr_t;
+            deep_forcedTarget_guid = nullptr;
+            deep_m_targetCombat_guid = nullptr;
             return;
 
         if (m_mgr.m_confDebugWhisper)
@@ -3166,8 +3166,8 @@ void PlayerbotAI::GetCombatTarget(Unit* forcedTarget)
         !m_bot->CanAttack(m_bot->GetMap()->GetUnit(deep_m_targetCombat_guid)) ||
         !m_bot->IsInMap(m_bot->GetMap()->GetUnit(deep_m_targetCombat_guid)))
     {
-        deep_m_targetCombat_guid = std::nullptr_t;
-        deep_forcedTarget_guid = std::nullptr_t;
+        deep_m_targetCombat_guid = nullptr;
+        deep_forcedTarget_guid = nullptr;
         m_targetCombat = nullptr;
     }
     // we already have a target and we are not forced to change it
@@ -3176,8 +3176,8 @@ void PlayerbotAI::GetCombatTarget(Unit* forcedTarget)
         // We have a target but it is neutralised and we are not forced to attack it: clear it for now
         if ((IsNeutralized(m_bot->GetMap()->GetUnit(deep_m_targetCombat_guid)) && !m_ignoreNeutralizeEffect))
         {
-            deep_m_targetCombat_guid = std::nullptr_t;
-            deep_forcedTarget_guid = std::nullptr_t;
+            deep_m_targetCombat_guid = nullptr;
+            deep_forcedTarget_guid = nullptr;
             m_targetCombat = nullptr;
             m_targetType = TARGET_NORMAL;
             m_targetChanged = true;
@@ -3187,8 +3187,8 @@ void PlayerbotAI::GetCombatTarget(Unit* forcedTarget)
         {
             if (!IsNeutralized(m_bot->GetMap()->GetUnit(deep_m_targetCombat_guid)) && m_ignoreNeutralizeEffect)
                 m_ignoreNeutralizeEffect = false;                           // target is no longer neutralised, clear ignore order
-            deep_m_targetCombat_guid = std::nullptr_t;
-            deep_forcedTarget_guid = std::nullptr_t;
+            deep_m_targetCombat_guid = nullptr;
+            deep_forcedTarget_guid = nullptr;
             return;                                                         // keep on attacking target
         }
     }
@@ -3200,7 +3200,7 @@ void PlayerbotAI::GetCombatTarget(Unit* forcedTarget)
         candidateTarget = FindAttacker((ATTACKERINFOTYPE)(AIT_VICTIMNOTSELF | AIT_LOWESTTHREAT), m_targetAssist);
         if (candidateTarget && !IsNeutralized(candidateTarget))
         {
-            deep_m_targetCombat_guid = candidateTarget->getUnitGuid();
+            deep_m_targetCombat_guid = candidateTarget->GetObjectGuid();
             if (m_mgr.m_confDebugWhisper)
                 TellMaster("Attacking %s to assist %s", deep_m_targetCombat->GetName(), m_targetAssist->GetName());
             m_targetType = (m_combatOrder & (ORDERS_TANK | ORDERS_MAIN_TANK) ? TARGET_THREATEN : TARGET_NORMAL);
@@ -3213,7 +3213,7 @@ void PlayerbotAI::GetCombatTarget(Unit* forcedTarget)
         candidateTarget = FindAttacker();
         if (candidateTarget && !IsNeutralized(candidateTarget))
         {
-            deep_m_targetCombat_guid = candidateTarget->getUnitGuid();
+            deep_m_targetCombat_guid = candidateTarget->GetObjectGuid();
             m_targetType = (m_combatOrder & (ORDERS_TANK | ORDERS_MAIN_TANK) ? TARGET_THREATEN : TARGET_NORMAL);
             m_targetChanged = true;
         }
@@ -3223,8 +3223,8 @@ void PlayerbotAI::GetCombatTarget(Unit* forcedTarget)
     {
         m_targetType = TARGET_NORMAL;
         m_targetChanged = false;
-        deep_m_targetCombat_guid = std::nullptr_t;
-        deep_forcedTarget_guid = std::nullptr_t;
+        deep_m_targetCombat_guid = nullptr;
+        deep_forcedTarget_guid = nullptr;
         return;
     }
 
@@ -3235,8 +3235,8 @@ void PlayerbotAI::GetCombatTarget(Unit* forcedTarget)
         dynamic_cast<Player*>(m_bot->GetMap()->GetUnit(deep_m_targetCombat_guid))->duel)
     {
         SetIgnoreUpdateTime(6);
-        deep_m_targetCombat_guid = std::nullptr_t;
-        deep_forcedTarget_guid = std::nullptr_t;
+        deep_m_targetCombat_guid = nullptr;
+        deep_forcedTarget_guid = nullptr;
         return;
     }
 
