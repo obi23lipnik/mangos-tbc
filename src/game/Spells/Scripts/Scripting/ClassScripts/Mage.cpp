@@ -26,7 +26,7 @@ struct ArcaneConcentration : public AuraScript
     {
         if (Spell* spell = procData.spell)
         {
-            if (IsChanneledSpell(spell))
+            if (IsChanneledSpell(procData.spellInfo))
             {
                 if (Spell* channeledSpell = spell->GetCaster()->GetCurrentSpell(CURRENT_CHANNELED_SPELL))
                 {
