@@ -26,19 +26,14 @@ struct ArcaneConcentration : public AuraScript
     {
         if (Spell* spell = procData.spell)
         {
-            if (IsChanneledSpell(spell->m_spellInfo))
-                return false; // these never proc
-            if (SpellEntry const* spellInfo = spell->GetTriggeredByAuraSpellInfo())
+            if (IsChanneledSpell(spell))
             {
-                if (IsChanneledSpell(spellInfo))
+                if (Spell* channeledSpell = spell->GetCaster()->GetCurrentSpell(CURRENT_CHANNELED_SPELL))
                 {
-                    if (Spell* channeledSpell = spell->GetCaster()->GetCurrentSpell(CURRENT_CHANNELED_SPELL))
-                    {
-                        if (channeledSpell->IsAuraProcced(aura))
-                            return false;
+                    if (channeledSpell->IsAuraProcced(aura))
+                        return false;
 
-                        channeledSpell->RegisterAuraProc(aura);
-                    }
+                    channeledSpell->RegisterAuraProc(aura);
                 }
             }
             spell->RegisterAuraProc(aura);
