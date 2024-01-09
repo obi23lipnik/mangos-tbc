@@ -1263,7 +1263,7 @@ bool ChatHandler::HandleBoostCommand(char *args)  // Copied over from levelup ch
             return false;
         }
     }
-    if (botConfig.GetBoolDefault("PlayerbotAI.AllowBoost", false);)
+    if (botConfig.GetBoolDefault("PlayerbotAI.AllowBoost", false))
     {
         PSendSysMessage("|cffff0000Bot boosting is not enabled on this server.");
         SetSentErrorMessage(true);
