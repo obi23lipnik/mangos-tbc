@@ -25,8 +25,6 @@ struct ArcaneConcentration : public AuraScript
     bool OnCheckProc(Aura* aura, ProcExecutionData& procData) const override
     {
         if (Spell* spell = procData.spell) {
-            if (spell->IsAuraProcced(aura))
-                return false;
             spell->RegisterAuraProc(aura);
         }
         return true;
