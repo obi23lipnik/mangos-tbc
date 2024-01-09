@@ -653,6 +653,9 @@ Player::Player(WorldSession* session): Unit(), m_taxiTracker(*this), m_mover(thi
     m_isDebuggingAreaTriggers = false;
 
     m_fishingSteps = 0;
+
+    m_lastDbGuid = 0;
+    m_lastGameObject = false;
 }
 
 Player::~Player()
@@ -5218,10 +5221,11 @@ void Player::UpdateRating(CombatRating cr)
             UpdateBlockPercentage();
             break;
         case CR_HIT_MELEE:
-            UpdateMeleeHitChances();
+            UpdateWeaponHitChances(BASE_ATTACK);
+            UpdateWeaponHitChances(OFF_ATTACK);
             break;
         case CR_HIT_RANGED:
-            UpdateRangedHitChances();
+            UpdateWeaponHitChances(RANGED_ATTACK);
             break;
         case CR_HIT_SPELL:
             UpdateSpellHitChances();
@@ -6255,7 +6259,7 @@ bool Player::SetPosition(float x, float y, float z, float orientation, bool tele
             SetGroupUpdateFlag(GROUP_UPDATE_FLAG_POSITION);
 
         if (GetTrader() && !IsWithinDistInMap(GetTrader(), INTERACTION_DISTANCE))
-            GetSession()->SendCancelTrade();   // will close both side trade windows
+            TradeCancel(true, TRADE_STATUS_TARGET_TO_FAR);
 
         if (m_needsZoneUpdate)
         {
@@ -10484,14 +10488,11 @@ Item* Player::EquipItem(uint16 pos, Item* pItem, bool update)
         ApplyEquipCooldown(pItem);
 
         if (slot == EQUIPMENT_SLOT_MAINHAND)
-        {
-            UpdateExpertise(BASE_ATTACK);
-            UpdateMeleeHitChances();
-        }
+            UpdateWeaponDependantStats(BASE_ATTACK);
         else if (slot == EQUIPMENT_SLOT_OFFHAND)
-            UpdateExpertise(OFF_ATTACK);
+            UpdateWeaponDependantStats(OFF_ATTACK);
         else if (slot == EQUIPMENT_SLOT_RANGED)
-            UpdateRangedHitChances();
+            UpdateWeaponDependantStats(RANGED_ATTACK);
     }
     else
     {
@@ -10646,10 +10647,10 @@ void Player::RemoveItem(uint8 bag, uint8 slot, bool update)
                             pItem->ClearEnchantment(PROP_ENCHANTMENT_SLOT_1);
                         }
 
-                        UpdateExpertise(BASE_ATTACK);
+                        UpdateWeaponDependantStats(BASE_ATTACK);
                     }
                     else if (slot == EQUIPMENT_SLOT_OFFHAND)
-                        UpdateExpertise(OFF_ATTACK);
+                        UpdateWeaponDependantStats(OFF_ATTACK);
                 }
             }
 
@@ -10772,11 +10773,13 @@ void Player::DestroyItem(uint8 bag, uint8 slot, bool update)
                 // remove item dependent auras and casts (only weapon and armor slots)
                 RemoveItemDependentAurasAndCasts(pItem);
 
-                // update expertise
+                // update weapon dependant stats
                 if (slot == EQUIPMENT_SLOT_MAINHAND)
-                    UpdateExpertise(BASE_ATTACK);
+                    UpdateWeaponDependantStats(BASE_ATTACK);
                 else if (slot == EQUIPMENT_SLOT_OFFHAND)
-                    UpdateExpertise(OFF_ATTACK);
+                    UpdateWeaponDependantStats(OFF_ATTACK);
+                else if (slot == EQUIPMENT_SLOT_RANGED)
+                    UpdateWeaponDependantStats(RANGED_ATTACK);
 
                 // equipment visual show
                 SetVisibleItemSlot(slot, nullptr);
@@ -11599,7 +11602,7 @@ void Player::SendSellError(SellResult msg, Creature* pCreature, ObjectGuid itemG
     GetSession()->SendPacket(data);
 }
 
-void Player::TradeCancel(bool sendback)
+void Player::TradeCancel(bool sendback, TradeStatus status /*= TRADE_STATUS_TRADE_CANCELED*/)
 {
     if (m_trade)
     {
@@ -11607,9 +11610,9 @@ void Player::TradeCancel(bool sendback)
 
         // send yellow "Trade canceled" message to both traders
         if (sendback)
-            GetSession()->SendCancelTrade();
+            GetSession()->SendCancelTrade(status);
 
-        trader->GetSession()->SendCancelTrade();
+        trader->GetSession()->SendCancelTrade(status);
 
         // cleanup
         delete m_trade;
